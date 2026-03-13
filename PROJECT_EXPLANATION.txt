@@ -1,0 +1,50 @@
+# Project Explanation: Black-Box Query-Based Adversarial Attack on MNIST
+
+This project implements a research-grade framework to evaluate the robustness of deep learning models (specifically CNNs on MNIST) against adversarial attacks in a black-box scenario.
+
+## 1. Project Goal
+The primary objective is to study how an attacker, with no access to a model's internal weights or gradients, can still craft adversarial examples by only querying the model's output probabilities.
+
+## 2. Key Components
+
+### A. Data Loading (data_loader.py)
+- Loads the MNIST dataset from local `Training/` and `Testing/` folders.
+- Uses `torchvision.datasets.ImageFolder` for organized loading.
+- Applies standard transformations: Grayscale conversion, Resizing (28x28), and Tensor conversion (normalizing to [0, 1]).
+
+### B. Model Architectures (model.py)
+- **Architecture A**: A standard CNN with two convolutional layers and two fully connected layers. It serves as the primary victim model.
+- **Architecture B**: A deeper CNN with dropout layers, used to test the **transferability** of adversarial noise from one architecture to another.
+
+### C. Training (train.py)
+- Trains the models using the Adam optimizer and Cross-Entropy loss.
+- Supports **Adversarial Training**: A defense mechanism where the training set is augmented with adversarial examples (FGSM) to make the model more robust.
+
+### D. Attack Algorithms (attack.py)
+- **FGSM (Fast Gradient Sign Method)**: A white-box baseline. It uses the model's gradients to craft adversarial examples in a single step.
+- **NES (Natural Evolution Strategy)**: The core black-box attack. It estimates the gradient of the loss function by sampling Gaussian noise around the input and querying the model for confidence scores. It then updates the image in the direction that maximizes the loss.
+
+### E. Evaluation (evaluate.py)
+- Performs a full research experiment:
+  1. **Clean Evaluation**: Measures baseline accuracy on clean test data.
+  2. **Untargeted Attack**: Tests NES to see how easily it can cause misclassification.
+  3. **Targeted Attack**: Tests if NES can force the model to predict a specific (wrong) target class.
+  4. **White-Box Comparison**: Compares NES against the FGSM baseline.
+  5. **Transferability**: Checks if adversarial examples created for Model A also fool Model B.
+  6. **Defense Evaluation**: Compares a standard model against an adversarially trained (robust) model.
+
+### F. Utilities (utils.py)
+- Calculates metrics like L2 and L-infinity distortion.
+- Handles automated plotting of results:
+  - Success Rate vs. Query Budget.
+  - Distortion vs. Query Count.
+  - Original vs. Adversarial visual comparison.
+  - Confidence Drop distribution.
+
+## 3. Workflow Summary
+1. **Train**: Run `train.py` to generate `model_A.pth`, `model_B.pth`, and `model_A_robust.pth`.
+2. **Evaluate**: Run `evaluate.py` to perform the attacks and compare results.
+3. **Analyze**: Check the `results/` folder for plots (`.png`) and structured data (`results.json`).
+
+## 4. Why This Matters
+Black-box attacks are realistic threats to AI systems deployed via APIs (e.g., image recognition services). Understanding these attacks and implementing defenses like adversarial training is critical for building secure AI.
