@@ -25,8 +25,6 @@ This project provides a research-grade framework for evaluating the robustness o
 - `utils.py`: Metrics, logging, and plotting utilities.
 - `results/`: Directory for experimental outputs and figures.
 - `PROJECT_EXPLANATION.txt`: Detailed technical breakdown of each component.
-- `FLOW_DIAGRAM.md`: Visual Mermaid-based project workflow diagram.
-- `RESEARCH_PAPER.txt`: Formal publication-style documentation.
 
 ## Prerequisites
 
